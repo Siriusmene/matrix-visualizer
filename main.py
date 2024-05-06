@@ -21,7 +21,8 @@ def translationMat(x, y):
 def transformMat(matrix):
     M = np.eye(3)
     M[:2, :2] = matrix
-    return M
+    flipy = np.diag((1, -1, 1))
+    return flipy @ M @ flipy
 
 
 def transformImage(image, matrix):
@@ -79,7 +80,12 @@ def rotate(angle):
 id = np.array([[1, 0], [0, 1]])
 alpha = math.pi / 4
 rot = rotate(alpha)
-sheer = np.array([[1, -1 / 2], [0, 1]])
-plotTransformations([sheer, sheer.T, rot])
+sheer = np.array(
+    [
+        [1, 1],
+        [0, 1],
+    ]
+)
+plotTransformations([sheer, sheer.T, id])
 
 # %%
