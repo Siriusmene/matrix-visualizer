@@ -34,7 +34,7 @@ def plotTransformations(tform_matricies, image=data.camera()):
     mid_x = image.shape[1] / 2
     mid_y = image.shape[0] / 2
 
-    fig, ax = plt.subplots(ncols=min(n_tforms, 2), nrows=n_tforms // 2 + 1)
+    fig, ax = plt.subplots(ncols=min(n_tforms, 2), nrows=(n_tforms + 1) // 2)
     ax = np.atleast_2d(ax)
     transTensor = np.stack(
         [tm @ np.array([[1, 1], [-1, 1]]) for tm in tform_matricies], axis=2
@@ -80,6 +80,6 @@ id = np.array([[1, 0], [0, 1]])
 alpha = math.pi / 4
 rot = rotate(alpha)
 sheer = np.array([[1, -1 / 2], [0, 1]])
-plotTransformations([sheer])
+plotTransformations([sheer, sheer.T, rot])
 
 # %%
