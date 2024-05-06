@@ -9,34 +9,51 @@ from skimage import transform
 
 # %%
 
-image = data.camera()
-height = image.shape[0]
-width = image.shape[1]
+
+def scaleMat(scale):
+    return np.array([[scale, 0, 0], [0, scale, 0], [0, 0, 1]])
 
 
-def transFormedImage(image, matrix):
-    height = image.shape[0]
-    width = image.shape[1]
+def translationMat(x, y):
+    return np.array([[1, 0, x], [0, 1, y], [0, 0, 1]])
+
+
+def transformMat(matrix):
     M = np.eye(3)
     M[:2, :2] = matrix
-    center = (width / 2, height / 2)
-    translation_matrix = np.array([[1, 0, -center[0]], [0, 1, -center[1]], [0, 0, 1]])
-    translation_inverse = np.linalg.inv(translation_matrix)
-    total = translation_inverse @ M @ translation_matrix
-    newImage = transform.warp(image, transform.AffineTransform(np.linalg.inv(total)))
-    return newImage
+    return M
+
+
+def transformImage(image, matrix):
+    return transform.warp(image, np.linalg.inv(matrix))
 
 
 def plotTransformations(tform_matricies, image=data.camera()):
+    """plot at least 2 transformations"""
     n_tforms = len(tform_matricies)
+    mid_x = image.shape[1] / 2
+    mid_y = image.shape[0] / 2
+
     fig, ax = plt.subplots(ncols=n_tforms)
-    scaled = transFormedImage(image, np.array([[2 / 3, 0], [0, 2 / 3]]))
-    for i in range(n_tforms):
-        ax[i].imshow(transFormedImage(scaled, tform_matricies[i]), cmap=plt.cm.gray)
-    for a in ax:
+
+    transTensor = np.stack(
+        [tm @ np.array([[1, 1], [-1, 1]]) for tm in tform_matricies], axis=2
+    )
+    maxim = np.max(np.abs(transTensor))
+    scale = 1 / maxim
+
+    transMats = [
+        translationMat(mid_x, mid_y)
+        @ transformMat(tm)
+        @ scaleMat(scale)
+        @ translationMat(-mid_x, -mid_y)
+        for tm in tform_matricies
+    ]
+    transformed = [transformImage(image, tm) for tm in transMats]
+
+    for i, a in enumerate(ax):
+        a.imshow(transformed[i], cmap=plt.cm.gray)
         a.axis("off")
-        a.set_xlim(0, width)
-        a.set_ylim(width, 0)
         a.set_aspect("equal")
     plt.style.use("dark_background")
     plt.tight_layout()
@@ -59,7 +76,7 @@ def rotate(angle):
 id = np.array([[1, 0], [0, 1]])
 alpha = math.pi / 4
 rot = rotate(alpha)
-sheer = np.array([[1, -0.5], [0, 1]])
+sheer = np.array([[1, -1], [0, 1]])
 plotTransformations([sheer, sheer.T])
 
 # %%
