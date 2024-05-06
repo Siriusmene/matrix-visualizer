@@ -29,7 +29,10 @@ def transformImage(image, matrix):
     return transform.warp(image, np.linalg.inv(matrix))
 
 
-def plotTransformations(tform_matricies, image=data.camera()):
+image = plt.imread("clock.jpg")
+
+
+def plotTransformations(tform_matricies, img=image):
     """plot at least 2 transformations"""
     n_tforms = len(tform_matricies)
     mid_x = image.shape[1] / 2
@@ -56,7 +59,7 @@ def plotTransformations(tform_matricies, image=data.camera()):
 
     for i in range(n_tforms):
         a = ax[i // 2][i % 2]
-        a.imshow(transformed[i], cmap=plt.cm.gray)
+        a.imshow(transformed[i], cmap=plt.cm.hot)
         a.axis("off")
         a.set_aspect("equal")
     plt.style.use("dark_background")
@@ -65,6 +68,8 @@ def plotTransformations(tform_matricies, image=data.camera()):
 
 
 # %%
+
+
 def rotate(angle):
     return np.array(
         [
@@ -86,6 +91,7 @@ sheer = np.array(
         [0, 1],
     ]
 )
-plotTransformations([sheer, sheer.T, id])
+
+plotTransformations([sheer, sheer.T, sheer @ sheer.T])
 
 # %%
