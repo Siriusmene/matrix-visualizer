@@ -59,7 +59,7 @@ def plotTransformations(tform_matricies, img=image):
 
     for i in range(n_tforms):
         a = ax[i // 2][i % 2]
-        a.imshow(transformed[i], cmap=plt.cm.hot)
+        a.imshow(transformed[i], cmap=plt.cm.gray)
         a.axis("off")
         a.set_aspect("equal")
     plt.style.use("dark_background")
@@ -87,11 +87,25 @@ alpha = math.pi / 4
 rot = rotate(alpha)
 sheer = np.array(
     [
-        [1, 1],
-        [0, 1],
+        [1, 0.2],
+        [-0.2, 1],
     ]
 )
+S = np.array(
+    [
+        [1, 0.5],
+        [0.5, 1.2],
+    ]
+)
+A = np.array(
+    [
+        [0, 0.5],
+        [-0.5, 0],
+    ]
+)
+# print(S @ A)
+# print(A @ S)
 
-plotTransformations([sheer, sheer.T, sheer @ sheer.T])
+plotTransformations([id, rot @ S])
 
 # %%
