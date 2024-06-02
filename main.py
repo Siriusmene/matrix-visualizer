@@ -4,7 +4,6 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from skimage import data
 from skimage import transform
 
 # %%
@@ -103,9 +102,11 @@ A = np.array(
         [-0.5, 0],
     ]
 )
+
+
 # print(S @ A)
 # print(A @ S)
 
-plotTransformations([id, rot @ S])
+plotTransformations([id, rot, sheer, S, A])
 
 # %%
